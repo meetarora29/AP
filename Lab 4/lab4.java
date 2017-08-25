@@ -175,7 +175,7 @@ abstract class Animals {
 	}
 
 	public boolean inGrassland(Grasslands g) {
-		if((x-g.getX())*(x-g.getX()) + (y-g.getY())*(y-g.getY()) < g.getRadius()*g.getRadius()) //Strictly inside
+		if((x-g.getX())*(x-g.getX()) + (y-g.getY())*(y-g.getY()) <= g.getRadius()*g.getRadius())
 			return true;
 		return false;
 	}
