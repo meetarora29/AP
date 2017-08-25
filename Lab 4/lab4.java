@@ -54,13 +54,17 @@ class World {
 		c_count=2;
 	}
 
-	public void simulate() {
+	public void simulate(int m) {
 		Random random=new Random();
 		int turns=time;
-		int max_time=-1;
+		int max_time=m;
 		while(!pq.isEmpty() && turns>0) {
-			int temp=max_time;
 			turns--;
+			// Object[] a=pq.toArray();
+			// System.out.println("MaxTime "+max_time);
+			// for(int i=0;i<a.length;i++)
+			// 	System.out.println(a[i]);
+			// System.out.println();
 			Animals head=pq.poll();
 			if(head==h_one)
 				System.out.println("It is First Herbivore");
@@ -70,22 +74,29 @@ class World {
 				System.out.println("It is First Carnivore");
 			else if(head==c_two)
 				System.out.println("It is Second Carnivore");
-			max_time=Math.max(max_time, head.getTime());
-			boolean dead=head.takeTurn(g_one, g_two, h_one, h_two, h_count, pq);
+			boolean dead=false;
+			if(head.getType()==1)
+				dead=head.takeTurn(g_one, g_two, c_one, c_two, c_count, pq);
+			else if(head.getType()==2)
+				dead=head.takeTurn(g_one, g_two, h_one, h_two, h_count, pq);
 			if(dead) {
 				System.out.println("It is dead");
 				if(head.getType()==1)
 					h_count--;
 				else if(head.getType()==2)
 					c_count--;
+				// System.out.println(h_count+" "+c_count);
 			}
 			else {
 				System.out.println("It's health after taking turn is "+head.getHealth());
 				int r=random.nextInt(time-max_time-1)+max_time+1; // Exclusive
+				// System.out.println("Random: "+r);
 				if(r==time-1){
-					max_time=temp;
+					System.out.println("It is removed");
+					System.out.println();
 					continue;
 				}
+				max_time=Math.max(max_time, r);
 				head.setTime(r);
 				pq.add(head);
 			}
@@ -107,6 +118,10 @@ abstract class Animals {
 		this.timestamp=timestamp;
 		this.health=health;
 		turn_count=0;
+	}
+
+	public String toString() {
+		return "X "+x+" Y "+y+" Time "+timestamp+" Health "+health+" Turn "+turn_count;
 	}
 
 	public int getX() {
@@ -164,6 +179,8 @@ abstract class Animals {
 	public Grasslands nearestGrassland(Grasslands a, Grasslands b) {
 		double a_dist=getDistance(a.getX(), a.getY());
 		double b_dist=getDistance(b.getX(), b.getY());
+		a_dist=Math.abs(a_dist-a.getRadius());
+		b_dist=Math.abs(b_dist-b.getRadius());
 		if(a_dist<=b_dist)
 			return a;
 		else
@@ -173,6 +190,8 @@ abstract class Animals {
 	public Grasslands nextnearestGrassland(Grasslands a, Grasslands b) {
 		double a_dist=getDistance(a.getX(), a.getY());
 		double b_dist=getDistance(b.getX(), b.getY());
+		a_dist=Math.abs(a_dist-a.getRadius());
+		b_dist=Math.abs(b_dist-b.getRadius());
 		if(a_dist<=b_dist)
 			return b;
 		else
@@ -201,6 +220,7 @@ abstract class Animals {
 	}
 
 	public void move(double units, int h, int k) {
+		//Using Ratio formula
 		double dist=getDistance(h, k);
 		double ratio=units/dist;
 		x=(int)((1-ratio)*x + ratio*h);
@@ -236,12 +256,16 @@ class Herbivores extends Animals {
 		Grasslands nextNearest=nextnearestGrassland(g_one, g_two);
 		Animals c_nearest=nearest(one, two);
 		int r=random.nextInt(100);
+		// System.out.println("g_nearest: x "+g_nearest.getX()+" y "+g_nearest.getY());
+		// System.out.println("nearest: x "+c_nearest.getX()+" y "+c_nearest.getY());
+		// System.out.println("Count "+count+" Random:"+r);
 		if(count==0) {
 			// Moves with 50% chance
 			if(r<50) {
 				if(inGrassland(g_nearest)){
 					move(5, nextNearest.getX(), nextNearest.getY());
 					setTurnCount(0);
+					// System.out.println("In");
 				}
 				else{
 					move(5, g_nearest.getX(), g_nearest.getY());
@@ -252,8 +276,10 @@ class Herbivores extends Animals {
 		}
 		else {
 			if(inGrassland(g_nearest)) {
+				// System.out.println("In");
 				setTurnCount(0);
 				if(g_nearest.getGrass()>=capacity) {
+					// System.out.println("CapLower");
 					if(r<90){
 						g_nearest.setGrass(g_nearest.getGrass()-capacity);
 						setHealth((int)(0.5*getHealth()));
@@ -269,6 +295,7 @@ class Herbivores extends Animals {
 					}
 				}
 				else {
+					// System.out.println("CapGreater");
 					if(r<20) {
 						if(g_nearest.getGrass()>0)
 							setHealth((int)(0.2*getHealth()));
@@ -286,6 +313,7 @@ class Herbivores extends Animals {
 				}
 			}
 			else {
+				// System.out.println("Out");
 				increaseTurnCount();
 				if(r<95) {
 					r=random.nextInt(100);
@@ -326,6 +354,9 @@ class Carnivores extends Animals {
 		Grasslands nextNearest=nextnearestGrassland(g_one, g_two);
 		Animals h_nearest=nearest(one, two);
 		int r=random.nextInt(100);
+		// System.out.println("g_nearest: x "+g_nearest.getX()+" y "+g_nearest.getY());
+		// System.out.println("nearest: x "+h_nearest.getX()+" y "+h_nearest.getY());
+		// System.out.println("Count "+count+" Random:"+r);
 		if(count==0) {
 			if(inGrassland(g_nearest))
 				setHealth(-30);
@@ -338,19 +369,23 @@ class Carnivores extends Animals {
 				setTurnCount(0);
 			else
 				increaseTurnCount();
+			// System.out.println("TurnCount: "+getTurnCount());
 			if(getDistance(h_nearest.getX(), h_nearest.getY())<=1) {
 				setHealth(2*h_nearest.getHealth()/3);
+				// System.out.println("Dead: "+h_nearest);
 				h_nearest.setHealth(0);
 				pq.remove(h_nearest);
 			}
 			else {
 				if(inGrassland(g_nearest)) {
+					// System.out.println("In");
 					if(r<25)
 						setHealth(-30);
 					else
 						move(2, h_nearest.getX(), h_nearest.getY());
 				}
 				else {
+					// System.out.println("Out");
 					if(r<92)
 						move(4, h_nearest.getX(), h_nearest.getY());
 					else
@@ -398,6 +433,7 @@ class Grasslands {
 public class lab4 {
 	public static void main(String[] args) {
 		Scanner Reader=new Scanner(System.in);
+		int max_time=-1;
 		System.out.println("Enter Total Final Time for Simulation:");
 		int n=Reader.nextInt();
 		System.out.println("Enter x, y centre, radius and Grass Available for First Grassland:");
@@ -420,11 +456,13 @@ public class lab4 {
 		one=Reader.nextInt();
 		two=Reader.nextInt();
 		three=Reader.nextInt();
+		max_time=Math.max(max_time, three);
 		Herbivores h1=new Herbivores(one, two, three);
 		System.out.println("Enter x, y position and timestamp for Second Herbivore:");
 		one=Reader.nextInt();
 		two=Reader.nextInt();
 		three=Reader.nextInt();
+		max_time=Math.max(max_time, three);
 		Herbivores h2=new Herbivores(one, two, three);
 		System.out.println("Enter Health for Carnivores:");
 		one=Reader.nextInt();
@@ -433,15 +471,17 @@ public class lab4 {
 		one=Reader.nextInt();
 		two=Reader.nextInt();
 		three=Reader.nextInt();
+		max_time=Math.max(max_time, three);
 		Carnivores c1=new Carnivores(one, two, three);
 		System.out.println("Enter x, y position and timestamp for Second Carnivore:");
 		one=Reader.nextInt();
 		two=Reader.nextInt();
 		three=Reader.nextInt();
+		max_time=Math.max(max_time, three);
 		Carnivores c2=new Carnivores(one, two, three);
 		World w=new World(n, h1, h2, c1, c2, g1, g2);
 		System.out.println("The Simulation Begins -");
 		System.out.println();
-		w.simulate();
+		w.simulate(max_time);
 	}
 }
