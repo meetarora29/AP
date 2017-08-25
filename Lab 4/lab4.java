@@ -59,6 +59,7 @@ class World {
 		int turns=time;
 		int max_time=-1;
 		while(!pq.isEmpty() && turns>0) {
+			int temp=max_time;
 			turns--;
 			Animals head=pq.poll();
 			if(head==h_one)
@@ -80,7 +81,11 @@ class World {
 			}
 			else {
 				System.out.println("It's health after taking turn is "+head.getHealth());
-				int r=random.nextInt(time-max_time+1)+max_time;
+				int r=random.nextInt(time-max_time-1)+max_time+1; // Exclusive
+				if(r==time-1){
+					max_time=temp;
+					continue;
+				}
 				head.setTime(r);
 				pq.add(head);
 			}
