@@ -224,8 +224,7 @@ public class lab5 {
 				String value=hm.get(key);
 				p.println(key+ " "+value);
 			}
-			if(choc>0)
-				p.println(choc);
+			p.println(choc);
 			p.close();
 		}
 		catch(Exception e) {
