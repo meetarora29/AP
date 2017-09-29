@@ -40,19 +40,15 @@ public class lab7 {
 		serialize(playlist, songs);
 	}
 
-	public static void search(ArrayList<Song> songs) {
+	public static String search(ArrayList<Song> songs) {
 		System.out.println("Enter song title to search: ");
 		String search_song=Reader.nextLine();
-		int found=-1;
 		for(Song song:songs) {
 			if(song.getTitle().equals(search_song)) {
-				System.out.println(song);
-				found=1;
-				break;
+				return song.toString();
 			}
 		}
-		if(found!=1)
-			System.out.println("Error: Name Does Not Exist");
+		return("Error: Name Does Not Exist");
 	}
 
 	public static void serialize(String playlist, ArrayList<Song> songs) throws IOException {
@@ -134,7 +130,7 @@ public class lab7 {
 					delete(playlist, songs);
 				}
 				else if(choice==3) {
-					search(songs);
+					System.out.println(search(songs));
 				}
 				else if(choice==4) {
 					System.out.println(display(songs));

@@ -4,7 +4,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 
 @Suite.SuiteClasses({
-	addTest.class
+	addTest.class,
+	delTest.class, 
+	searchTest.class
 })
 
 public class TestSuite {}
