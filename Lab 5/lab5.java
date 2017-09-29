@@ -123,6 +123,8 @@ public class lab5 {
 		Scanner Reader=new Scanner(System.in);
 		int x=Reader.nextInt();
 		int n=Reader.nextInt();
+		// BSTFilesBuilder abc=new BSTFilesBuilder();
+		// abc.createBSTFiles(n, x);
 		ArrayList<Tree<Integer>> i_list=new ArrayList<Tree<Integer>>();
 		ArrayList<Tree<String>> s_list=new ArrayList<Tree<String>>();
 		ArrayList<Tree<Double>> d_list=new ArrayList<Tree<Double>>();
@@ -165,7 +167,7 @@ public class lab5 {
 			System.out.println("File not found.");
 		}
 
-		HashMap<Integer, String> hm=new HashMap<Integer, String>();
+		TreeMap<Integer, String> hm=new TreeMap<Integer, String>();
 
 		for(int i=0;i<i_list.size();i++) {
 			// System.out.println(i_list.get(i));
