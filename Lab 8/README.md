@@ -11,6 +11,10 @@ Speedup (using formula RecursiveTime/ParallelTime), with ThreadPool Size:
 2 = 1878.82,
 3 = 2008.14
 
+Speedup (using formula ParallelTime1/ParallelTimeX), with ThreadPool Size:
+2 = 225,
+3 = 336.27
+
 
 
 
