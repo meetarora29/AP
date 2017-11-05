@@ -6,7 +6,7 @@ import java.util.*;
 
 class PascalTriangle extends RecursiveTask<Long> {
 	private final int n, k;
-	private static Map<String, PascalTriangle> instances=new HashMap<String, PascalTriangle>();
+	private static volatile Map<String, PascalTriangle> instances=new HashMap<String, PascalTriangle>();
 
 	private PascalTriangle(int n, int k) {
 		this.n=n;
