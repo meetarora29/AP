@@ -31,6 +31,10 @@ class PascalTriangle extends RecursiveTask<Long> {
 		left.fork();
 		return right.compute() + left.join();
 	}
+
+	public static void clear() {
+		instances.clear();
+	}
 }
 
 public class Main {
@@ -65,6 +69,7 @@ public class Main {
 		long flyweightTime=endTime-startTime;
 		System.out.println(flyweightTime);
 
+		PascalTriangle.clear();
 		startTime=System.nanoTime();
 		pool=new ForkJoinPool(2);
 		task=PascalTriangle.getInstance(n, k);
@@ -74,6 +79,7 @@ public class Main {
 		long flyweightTime2=endTime-startTime;
 		System.out.println(flyweightTime2);
 
+		PascalTriangle.clear();
 		startTime=System.nanoTime();
 		pool=new ForkJoinPool(3);
 		task=PascalTriangle.getInstance(n, k);
